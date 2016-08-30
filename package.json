@@ -1,0 +1,57 @@
+{
+    "author": "yuri@galanter.net",
+    "dependencies": {},
+    "keywords": [],
+    "name": "nag-for-pebble",
+    "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
+        "displayName": "Nag for Pebble",
+        "enableMultiJS": true,
+        "messageKeys": {
+            "KEY_BUZZ_INTENSITY": 0,
+            "KEY_BUZZ_INTERVAL": 1,
+            "KEY_BUZZ_START": 2,
+            "KEY_ENABLE_QUIET_TIME": 4,
+            "KEY_QUIET_TIME_END_HOUR": 6,
+            "KEY_QUIET_TIME_START_HOUR": 5,
+            "KEY_UNLOCK": 7,
+            "KIEZELPAY_APP_ID": 119526514,
+            "KIEZELPAY_DEVICE_TOKEN": 119526515,
+            "KIEZELPAY_INTERNET_FAIL": 119526520,
+            "KIEZELPAY_PURCHASE_CODE": 119526519,
+            "KIEZELPAY_PURCHASE_STATUS": 119526521,
+            "KIEZELPAY_RANDOM": 119526522,
+            "KIEZELPAY_READY": 119526512,
+            "KIEZELPAY_STATUS_CHECK": 119526513,
+            "KIEZELPAY_STATUS_CHECKSUM": 119526517,
+            "KIEZELPAY_STATUS_RESULT": 119526516,
+            "KIEZELPAY_STATUS_TRIAL_DURATION": 119526518,
+            "KIEZELPAY_STATUS_VALIDITY_PERIOD": 119526523
+        },
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/menu.png",
+                    "menuIcon": true,
+                    "name": "MENU",
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite"
+        ],
+        "uuid": "187e3484-3d4f-4eaf-9e5c-0397439621dc",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.54.0"
+}
