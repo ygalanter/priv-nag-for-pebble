@@ -313,8 +313,12 @@ static void deinit() {
     persist_delete(KEY_NEXT_TIME); // upon config close delete saved time so upon 1st start new system one can be read
     text_layer_destroy(textlayer);
     window_destroy(window);
-    if (buzz_intensity != BUZZ_DISABLED) {
+    
+    if (buzz_intensity != BUZZ_DISABLED) { //if we did not disable buzz - schedule wakeup
       schedule_and_buzz();  
+    } else { // otherwise cancel all wake ups
+        vibes_cancel();
+        wakeup_cancel_all();
     }
   }
 }

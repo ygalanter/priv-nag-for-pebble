@@ -1,4 +1,4 @@
-var version = "1.54";
+var version = "1.55";
 
 
 /* === KIEZELPAY === SET TO false BEFORE RELEASING === */
