@@ -9,6 +9,46 @@ time_t next;
 int buzz_intensity, buzz_interval, buzz_start;
 int enable_quiet_time, quiet_time_start_hour, quiet_time_end_hour;
 
+// Create and add app glance slices...
+#ifndef PBL_PLATFORM_APLITE
+static void prv_update_app_glance(AppGlanceReloadSession *session, size_t limit, void *context) {
+  
+  // This should never happen, but developers should always ensure they arenot adding more slices than are available
+  if (limit < 1) return;
+  
+  //to store next wake up message
+  char message[25];
+  struct tm *next_tm = localtime(&next);
+  bool status = (bool)context;
+  
+  if (status) {
+    strftime(message, sizeof(message), "Next: %b-%d %H:%M", next_tm);
+  } else {
+    snprintf(message, sizeof(message), "Disabled");
+  }
+  
+  // Create the AppGlanceSlice
+  // NOTE: When .icon is not set, the app's default icon is used
+  const AppGlanceSlice entry = (AppGlanceSlice) {
+    .layout = {
+      //.icon = ((PublishedId)RESOURCE_ID_MENU),
+      .subtitle_template_string = message
+    },
+    .expiration_time = APP_GLANCE_SLICE_NO_EXPIRATION
+  };
+
+  // Add the slice, and check the result
+  const AppGlanceResult result = app_glance_add_slice(session, entry);
+
+  if (result != APP_GLANCE_RESULT_SUCCESS) {
+    APP_LOG(APP_LOG_LEVEL_ERROR, "AppGlance Error: %d", result);
+  }
+  
+}
+#endif
+
+
+
 // schedules next wake up and does current buzz
 static void schedule_and_buzz() {
   
@@ -24,12 +64,6 @@ static void schedule_and_buzz() {
      next  = time(NULL);  
   }
   
-//   //Debug
-//   struct tm *t = localtime(&next);
-//   char s_time[] = "88:44:67";
-//   strftime(s_time, sizeof(s_time), "%H:%M:%S", t);
-//   APP_LOG(APP_LOG_LEVEL_DEBUG, "Current time = %s", s_time);  
-//   APP_LOG(APP_LOG_LEVEL_DEBUG, "Buzz Interval = %d, buzz_start = %d", buzz_interval, buzz_start);
   
   // if inital call is to start at specific hour time - calculate that time
   if (buzz_start != START_IMMEDIATLY) {
@@ -133,13 +167,11 @@ static void schedule_and_buzz() {
     
   }  
   
-//   //debug
-//   t = localtime(&next);
-//   strftime(s_time, sizeof(s_time), "%H:%M:%S", t);
-//   strftime(s_time, sizeof(s_time), "%H:%M:%S", t);
-//   APP_LOG(APP_LOG_LEVEL_DEBUG, "Next time = %s", s_time);  
+  //updating appglance to reflect new wake up time
+  #ifndef PBL_PLATFORM_APLITE
+  app_glance_reload(prv_update_app_glance, (void *)true); //second param - schedule enabled
+  #endif
 
-  
   // scheduling next wakeup
   persist_write_int(KEY_NEXT_TIME, next);
   wakeup_schedule(next, 0, false);  
@@ -282,9 +314,6 @@ static void init() {
     
       window = window_create();
       window_set_background_color(window, GColorBlack);
-//       #ifdef PBL_PLATFORM_APLITE
-//         window_set_fullscreen(window, true);
-//       #endif
       GRect bounds = layer_get_bounds(window_get_root_layer(window));
     
       #ifdef PBL_RECT
@@ -319,6 +348,11 @@ static void deinit() {
     } else { // otherwise cancel all wake ups
         vibes_cancel();
         wakeup_cancel_all();
+      
+        //updating appglance to show disabled status
+        #ifndef PBL_PLATFORM_APLITE
+        app_glance_reload(prv_update_app_glance, (void *)false); //second param - schedule disabled
+        #endif
     }
   }
 }
